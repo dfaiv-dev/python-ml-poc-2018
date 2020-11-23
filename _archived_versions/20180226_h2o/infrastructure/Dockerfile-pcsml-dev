@@ -1,0 +1,31 @@
+##
+# Provides a remote SSH python interpreter using the base pcsml/sklearn image
+##
+
+FROM pcsml/base:latest
+
+VOLUME /var/opt/devel
+
+RUN apt-get update \
+    && apt-get install -y tmux
+
+####
+# expose ssh
+# https://docs.docker.com/engine/examples/running_ssh_service/
+####
+RUN apt-get update && apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:[pwd]' | chpasswd
+RUN sed -i 's/.*PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/.*Port .*/Port 42202/' /etc/ssh/sshd_config
+#RUN echo "Port 42202" >> /etc/ssh/sshd_confg
+#RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+EXPOSE 42202
+
+# use ADD to magically extract these files
+
+
+CMD ["/usr/sbin/sshd", "-D"]

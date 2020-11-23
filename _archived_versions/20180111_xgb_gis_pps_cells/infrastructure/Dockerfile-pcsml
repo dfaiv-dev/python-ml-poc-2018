@@ -1,0 +1,39 @@
+FROM ubuntu:17.10
+
+WORKDIR /tmp
+
+# configure apt and install packages
+RUN apt-get update \
+    && apt-get install -y \
+            software-properties-common wget curl nano \
+            git build-essential
+
+####
+# python env setup
+####
+RUN apt-get update \
+    && apt-get -y upgrade python3 \
+    && apt-get -y install python3-dev python3-pip
+
+# set python3 as default python
+RUN ln -s /usr/bin/python3 /usr/local/bin/python \
+    && ln -s /usr/bin/pip3 /usr/local/bin/pip
+
+# python packages and dependencies
+RUN apt-get update \
+    && apt-get install -y python3-gdal python3-tk graphviz unixodbc-dev
+
+# xgboost shared libs
+#RUN git clone --recursive https://github.com/dmlc/xgboost
+#WORKDIR /tmp/xgboost
+#RUN . ./build.sh
+#WORKDIR /tmp/xgboost/python-package
+#RUN python setup.py install
+
+# pip installs
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+#RUN pip install \
+#    xgboost azure sqlalchemy pandas geopandas scipy numpy sklearn openpyxl graphviz pyodbc \
+#    psycopg2 seaborn plotly ipython

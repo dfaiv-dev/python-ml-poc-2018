@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "virtualMachineName": {
+            "value": "pcs-dev-ml-dkrh-002a"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS1_v2"
+        },
+        "adminUsername": {
+            "value": "pcsdev"
+        },
+        "virtualNetworkName": {
+            "value": "pcs-dev-ml-vnet"
+        },
+        "networkInterfaceName": {
+            "value": "pcs-dev-ml-dkrh-002a706"
+        },
+        "networkSecurityGroupName": {
+            "value": "pcs-dev-ml-dkrh-nsg"
+        },
+        "adminPublicKey": {
+            "value": "ssh-rsa [pubkey]"
+        },
+        "diagnosticsStorageAccountName": {
+            "value": "[name]"
+        },
+        "diagnosticsStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "diagnosticsStorageAccountId": {
+            "value": "Microsoft.Storage/storageAccounts/[id]"
+        },
+        "addressPrefix": {
+            "value": "10.0.0.0/24"
+        },
+        "subnetName": {
+            "value": "default"
+        },
+        "subnetPrefix": {
+            "value": "10.0.0.0/24"
+        },
+        "publicIpAddressName": {
+            "value": "pcs-dev-ml-dkrh-002a-ip"
+        },
+        "publicIpAddressType": {
+            "value": "Dynamic"
+        },
+        "publicIpAddressSku": {
+            "value": "Basic"
+        }
+    }
+}

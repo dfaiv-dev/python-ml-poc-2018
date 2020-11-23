@@ -1,0 +1,33 @@
+FROM ubuntu:16.04
+
+WORKDIR /tmp
+
+# configure apt and install packages
+RUN apt-get update \
+    && apt-get -y install software-properties-common apt-transport-https \
+    && add-apt-repository -y ppa:jonathonf/python-3.6 \
+    && apt-get update \
+    && apt-get -y install python3.6 python3.6-dev wget curl
+
+# get pip3
+RUN wget https://bootstrap.pypa.io/get-pip.py \
+    && python3.6 get-pip.py
+
+# set python3.6 as default python
+RUN ln -s /usr/bin/python3.6 /usr/local/bin/python
+
+# gdal and other osgeo repo and installs
+RUN add-apt-repository -y ppa:ubuntugis/ppa \
+    && apt-get -y update \
+    && apt-get -y install gdal-bin libgdal-dev
+
+####
+# python env setup
+####
+
+RUN apt-get update && apt-get install -y graphviz
+# python packages
+# gdal, special build to point to headers
+RUN pip install gdal==2.1.3 --global-option build_ext --global-option "-I/usr/include/gdal"
+RUN pip install azure sqlalchemy pandas geopandas scipy numpy sklearn openpyxl graphviz pyodbc
+RUN pip install psycopg2 seaborn plotly ipython

@@ -1,0 +1,24 @@
+
+# idea
+.idea/dataSources.local.xml
+.idea/dataSources.xml
+.idea/dataSources/
+.idea/dictionaries/
+.idea/encodings.xml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/py-scikit-spike.iml
+.idea/sqldialects.xml
+.idea/workspace.xml
+.idea/
+
+_temp/
+20170907_ml_training_dump/
+/results/_scratch/
+/training_data/dumps/
+/projectFilesBackup/
+settings.user.json
+/.ipynb_checkpoints/
+__pycache__/
+venv/

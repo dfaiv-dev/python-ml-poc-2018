@@ -1,0 +1,9 @@
+_archived_versions
+_temp
+results
+training_data
+__pycache__
+.idea
+.git
+
+.gitignore

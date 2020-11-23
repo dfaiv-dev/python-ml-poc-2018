@@ -1,0 +1,63 @@
+FROM ubuntu:17.10
+
+WORKDIR /tmp
+
+# configure apt and install packages
+RUN apt-get update \
+    && apt-get install -y \
+            software-properties-common wget curl nano \
+            git build-essential
+
+####
+# python env setup
+####
+RUN apt-get update \
+    && apt-get -y upgrade python3 \
+    && apt-get -y install python3-dev python3-pip
+
+# set python3 as default python
+RUN ln -s /usr/bin/python3 /usr/local/bin/python \
+    && ln -s /usr/bin/pip3 /usr/local/bin/pip
+
+# python packages and dependencies
+RUN apt-get update \
+    && apt-get install -y python3-gdal python3-tk graphviz unixodbc-dev
+
+# xgboost shared libs
+#RUN git clone --recursive https://github.com/dmlc/xgboost
+#WORKDIR /tmp/xgboost
+#RUN . ./build.sh
+#WORKDIR /tmp/xgboost/python-package
+#RUN python setup.py install
+
+# pip installs
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# other pip installs
+RUN pip install tensorflow
+RUN pip install h5py keras
+RUN pip install requests tabulate scikit-learn colorama future \
+    && pip install -U h2o
+
+# h2o ports
+EXPOSE 54321
+EXPOSE 54322
+
+# Add JAVA
+ENV JAVA_PKG=h2oai/server-jre-8u*-linux-x64.tar.gz \
+    JAVA_HOME=/usr/java/default
+
+ADD $JAVA_PKG /usr/java/
+
+RUN export JAVA_DIR=$(ls -1 -d /usr/java/*) && \
+    ln -s $JAVA_DIR /usr/java/latest && \
+    ln -s $JAVA_DIR /usr/java/default && \
+    update-alternatives --install /usr/bin/java java $JAVA_DIR/bin/java 20000 && \
+    update-alternatives --install /usr/bin/javac javac $JAVA_DIR/bin/javac 20000 && \
+    update-alternatives --install /usr/bin/jar jar $JAVA_DIR/bin/jar 20000
+
+
+#RUN pip install \
+#    xgboost azure sqlalchemy pandas geopandas scipy numpy sklearn openpyxl graphviz pyodbc \
+#    psycopg2 seaborn plotly ipython

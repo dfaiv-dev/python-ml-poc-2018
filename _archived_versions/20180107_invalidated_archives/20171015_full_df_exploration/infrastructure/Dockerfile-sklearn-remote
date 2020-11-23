@@ -1,0 +1,33 @@
+##
+# Provides a remote SSH python interpreter using the base pcsml/sklearn image
+##
+
+FROM pcsml/sklearn:latest
+
+####
+# expose ssh
+# https://docs.docker.com/engine/examples/running_ssh_service/
+####
+RUN apt-get update && apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:[pwd]' | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/Port .*/Port 42201/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+#ENV NOTVISIBLE "in users profile"
+#RUN echo "export VISIBLE=now" >> /etc/profile
+
+EXPOSE 22
+
+# copy pycharm helpers so we don't need to deploy thme
+# 20170921 PyCharm still seems to copy them...
+#WORKDIR /tmp
+#COPY pycharm_helpers.tar.gz .
+#RUN tar -xzvf pycharm_helpers.tar.gz \
+#        && mkdir -p /usr/local/lib/pycharm \
+#        && mv .pycharm_helpers /usr/local/lib/pycharm/ \
+#        && ln -s /usr/local/lib/pycharm/.pycharm_helpers /root/.pycharm_helpers \
+#        && rm pycharm_helpers.tar.gz

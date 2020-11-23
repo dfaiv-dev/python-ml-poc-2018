@@ -1,0 +1,6 @@
+FROM pcsml/base
+
+WORKDIR /opt/pcsml/gis_pps_xgboost_gridsearchcv
+COPY src .
+
+CMD ["python", "-u", "main.py"]

@@ -1,0 +1,6 @@
+FROM pcsml/sklearn
+
+WORKDIR /opt/pcsml/gis_pps_crossval
+COPY src .
+
+CMD ["python", "-u", "main.py"]

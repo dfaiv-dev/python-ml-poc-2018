@@ -1,0 +1,76 @@
+########################################################################
+# Dockerfile for Oracle JDK 8 on Ubuntu 16.04
+########################################################################
+
+# pull base image
+FROM ubuntu:16.04
+
+# add a post-invoke hook to dpkg which deletes cached deb files
+# update the sources.list
+# update/dist-upgrade
+# clear the caches
+
+RUN echo 'DPkg::Post-Invoke {"/bin/rm -f /var/cache/apt/archives/*.deb || true";};' | tee /etc/apt/apt.conf.d/no-cache && \
+    apt-get update -q -y && \
+    apt-get -y upgrade && \
+    apt-get dist-upgrade -y && \
+    apt-get install -y build-essential && \
+    apt-get install -y software-properties-common && \
+    apt-get install -y byobu curl git htop man unzip vim wget && \
+    apt-add-repository universe && \
+    apt-get install -y python python-pip && \
+    apt-get clean && \
+  rm -rf /var/lib/apt/lists/* \
+  rm -rf /var/cache/apt/*
+
+ENV JAVA_PKG=h2oai/server-jre-8u*-linux-x64.tar.gz \
+    JAVA_HOME=/usr/java/default
+
+ADD $JAVA_PKG /usr/java/
+
+RUN export JAVA_DIR=$(ls -1 -d /usr/java/*) && \
+    ln -s $JAVA_DIR /usr/java/latest && \
+    ln -s $JAVA_DIR /usr/java/default && \
+    update-alternatives --install /usr/bin/java java $JAVA_DIR/bin/java 20000 && \
+    update-alternatives --install /usr/bin/javac javac $JAVA_DIR/bin/javac 20000 && \
+    update-alternatives --install /usr/bin/jar jar $JAVA_DIR/bin/jar 20000
+
+# Install Python/Pip
+RUN apt-get install -y python python-pip
+
+# Fetch h2o latest_stable
+RUN wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
+  wget --no-check-certificate -i latest -O /opt/h2o.zip && \
+  unzip -d /opt /opt/h2o.zip && \
+  rm /opt/h2o.zip && \
+  cd /opt && \
+  cd `find . -name 'h2o.jar' | sed 's/.\///;s/\/h2o.jar//g'` && \
+  cp h2o.jar /opt && \
+  /usr/bin/pip install `find . -name "*.whl"` && \
+  cd / && \
+  wget https://raw.githubusercontent.com/h2oai/h2o-3/master/docker/start-h2o-docker.sh && \
+  chmod +x start-h2o-docker.sh
+
+# Get Content
+#RUN wget http://s3.amazonaws.com/h2o-training/mnist/train.csv.gz && \
+#  gunzip train.csv.gz && \
+#  wget https://raw.githubusercontent.com/laurendiperna/Churn_Scripts/master/Extraction_Script.py  && \
+#  wget https://raw.githubusercontent.com/laurendiperna/Churn_Scripts/master/Transformation_Script.py && \
+#  wget https://raw.githubusercontent.com/laurendiperna/Churn_Scripts/master/Modeling_Script.py
+
+
+# Define a mountable data directory
+#VOLUME \
+#  ["/data"]
+
+# Define the working directory
+#WORKDIR \
+#  /data
+
+EXPOSE 54321
+EXPOSE 54322
+
+#ENTRYPOINT ["java", "-Xmx4g", "-jar", "/opt/h2o.jar"]
+# Define default command
+
+CMD ["java", "-Xmx4g", "-jar", "/opt/h2o.jar"]

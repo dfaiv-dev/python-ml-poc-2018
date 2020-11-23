@@ -1,0 +1,8 @@
+{
+  "azure": {
+    "pcs_storage_sas": ""
+  },
+  "db": {
+    "gis": ""
+  }
+}

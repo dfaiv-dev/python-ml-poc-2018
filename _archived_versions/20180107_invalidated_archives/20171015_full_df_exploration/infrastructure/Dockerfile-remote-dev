@@ -1,0 +1,6 @@
+FROM pcsml/sklearn-remote
+
+VOLUME /var/opt/pcsml/dev
+VOLUME /var/opt/pcsml/data
+
+CMD ["/usr/sbin/sshd", "-D"]

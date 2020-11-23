@@ -1,0 +1,10 @@
+{
+  "azure": {
+    "pcs_storage_sas": ""
+  },
+  "db": {
+    "gis": ""
+  },
+  "results_dir": "/var/opt/pcsml/out",
+  "data_dir": "/var/opt/pcsml/data"
+}

@@ -1,0 +1,7 @@
+FROM pcsml/sklearn:latest
+
+COPY . /opt/pcsml/app
+
+VOLUME /var/opt/pcsml/app
+
+WORKDIR /opt/pcsml/app
